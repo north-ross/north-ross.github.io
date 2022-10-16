@@ -1,0 +1,87 @@
+html, body, #container {
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+    background-color: black;
+  }
+  
+  #bfheader {
+      font-size: 18pt;
+      font-size: 1.2vw;
+      text-align: center;
+  }
+  #sidebar {
+    float: left;
+    height: 75%;
+    max-width: 50%;
+    width: 25%;
+    background-color: black;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 10pt;
+  }
+  #legend{
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+  #recentClick{   
+    margin-left: 20px;
+    margin-right: 20px;
+    }
+
+  #mapid {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    height: 100%;
+    width: auto;
+  }
+  #marker {
+    float: left;
+    width: 15px;
+    margin-left: -40px;
+    margin-right: 10px;
+  }
+  .sidebar-wrapper {
+    height: 100%;
+    position: relative;
+    width: 100%;
+  }
+  .collapsible {
+    background-color: #003333;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+  }
+  
+  .active, .collapsible:hover {
+    background-color: #001a1a;
+  }
+  .center { 
+    height: 200px;
+    position: relative;
+  }
+  
+  .center p {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+  .content {
+    display: none;
+    overflow: hidden;
+  }
+  @media (max-width: 767px) {
+  #sidebar {
+    display: none;
+  }
+  }
+  

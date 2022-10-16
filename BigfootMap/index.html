@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFRO Report Locations</title>
+    <meta property="og:image" content="http://www.sgrc.selkirk.ca/students/northross/BFRO-Reports/thumbnail.jpg">
+    <meta property="og:title" content="Bigfoot Field Researchers Organization: Sasquatch Sightings and Reports Locations">
+    <meta name="description" content="This map displays the locations of over 4000 reports of encounters with bigfoot/sasquatch creatures.">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <link rel="stylesheet" href="javascript/style.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+
+    <script src="javascript/leaflet-providers.js"></script>
+    <script src="javascript/leaflet-ajax.js"></script>
+    <script src="javascript/leaflet.markercluster.js"></script>
+
+    <link rel="stylesheet" href="javascript/MarkerCluster.css" />
+    <link rel="stylesheet" href="javascript/MarkerCluster.Default.css" />
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.18/"></script>
+
+    <base target="_blank"/>
+</head>
+<body>
+
+      <div id="container">
+        <div id="sidebar">
+            <div id="bfheader">
+                <a href = "https://www.bfro.net"><img src="https://www.bfro.net/images/templates/LogoSpin.gif?a;a;a;a;a;" alt="BFRO logo" style="float: left;" ></a>
+                <p style = "padding: 20px 0"><b>Bigfoot Field Researchers Organization: Sasquatch Sightings and Reports</b></p>
+            </div>
+            <div style="clear: left;">
+                <p style="color:brown; font-size: 14; text-align: center;"><b>UNOFFICIAL: This page not affiliated with the BFRO.</b></p>
+                <p id="intro">This map displays the locations of over 4000 reports of encounters with bigfoot/sasquatch creatures. 
+                    Please note that the report locations are known to be somewhat innacurate and are not endorsed by the BFRO. See Disclaimer below for more info.
+                </p>
+                
+                <button type="button" class="collapsible">Data Info</button>
+                <div class="content">
+                    <p> Click on each report to learn more about it on the BFRO website. Change the base map using the button in the top-left.</p>
+                    <p>This comprehensive database of credible sightings and related reports is maintained by an all-volunteer network of bigfoot/sasquatch researchers, archivists, and investigators in the United States and Canada - the BFRO. </p>
+                    <p>If you have had a sighting in the United States, Canada, or any other country, please take a moment and report it to our team of scientists using the button below. The report will be kept quiet and not published if you request it.</p>
+                    <p style="text-align:center ;"><button style="color: black;" type="button" onclick="window.open('https://www.bfro.net/GDB/submitfm.asp', '_blank')">Submit a new report</button></p>
+                </div>
+                <button type="button" class="collapsible">Report Classification</button>
+                <div class="content">
+                    <p><b><a href = "http://www.bfro.net/gdb/classify.asp#classification" target="_blank" style="font-size: 12;">BFRO Classification System:</b></a></p>
+                    <p id="legend">
+                    <img src="classA.jpg" alt="Class A icon" id="marker"> <b>Class A Encounter</b>: Well-documented sighting, low potential for misidentification.<br>
+                    <img src="classB.jpg" alt="Class B icon" id="marker"> <b>Class B Encounter</b>: Credible report with some potential for misidentification.<br>
+                    <img src="classC.jpg" alt="Class C icon" id="marker"> <b>Class C Encounter</b>: Reports with untraceable sources, rarely listed publicly.<br></p>
+                </div>
+                <button type="button" class="collapsible">Disclaimer</button>
+                <div class="content">
+                    <p>For a number of reasons, many of the locations displayed on this map do not reflect the actual location of the incident. For this reason, the BFRO discontinued making
+                        the spatial component to their database public in 2019. This map's author decided that this information is interesting, despite its errors, and that the approximate locations
+                        provide an engaging way to explore the BFRO's vast database of credible sightings. However, this map remains unaffiliated with the BFRO website.</p>
+                    <p><b>Do not contact the BFRO with any concerns about location accuracy. The BFRO does not endorse the accuracy of these locations.</b> </p>
+                    <p>If you have feedback about the map, contact the author at northarperross [at] gmail [dot] com</p>
+                    <p>A future project for the BFRO would go through the reports database and clean up erroenous locations, although this project is unlikely to be undertaken soon.</p>
+                </div>
+                <i><p id="recentClick">You last clicked the map at point: </p></i>
+
+            </div>
+            
+
+        </div>
+        <div id="mapid"></div>
+      </div>
+<script>
+    // Collapsing element function for the sidebar (from w3 school):
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+            content.style.display = "none";
+            } else {
+            content.style.display = "block";
+            }
+        });
+    } 
+    
+    // Map elememts:
+    var mymap = L.map('mapid').setView([42, -95], 4);
+    L.control.scale().addTo(mymap);
+
+    // Base maps:
+    var cycle = L.tileLayer.provider('CyclOSM').addTo(mymap),
+        imagery = L.tileLayer.provider('Esri.WorldImagery'),
+        usgstopo = L.tileLayer.provider('USGS.USImageryTopo');
+    var basemaps = {
+        "OpenStreetMap Topographic": cycle,
+        "ESRI Imagery": imagery,
+        "USGS Imagery + Topo (US only)": usgstopo
+    };
+    L.control.layers(basemaps).addTo(mymap);
+
+    // GeoJSON of report points:
+    // var geoJSONUrl="http://www.sgrc.selkirk.ca/students/northross/BFRO-Reports/BFRO_Points.json";
+    var geoJSONUrl="BFRO_Points.json";
+    var markers = L.markerClusterGroup();
+
+    // Style function for the geojson layer: based on classification
+    function getColor(bfclass) {
+        if (bfclass =='Class A'){return "#FF0000" }
+        else if (bfclass =='Class B'){return "#FF9933" }
+        else if (bfclass == "Class C"){return "#FFFF99"}
+        else {return "#FCFF15"}
+    }
+
+    //loading the geojson
+    var counter = 0
+    var geojsonAjax=new L.GeoJSON.AJAX(geoJSONUrl,{
+        style: function(feature) {
+            return {
+                radius:6,
+                fillColor: getColor(feature.properties.class),
+                color: "#000000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.7
+            }
+        },
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng)
+        },
+        onEachFeature: function (feature, layer){
+                counter++; // Keep counter to display number of points
+                var popContent=feature.properties.popup
+                var popupNoBadLoc = popContent.substring(0,popContent.search("BadLocationID=") - 59) // Remove the link to a form to report bad locations from popup. 
+                var disclaimer = "<p style:\"color:red\"><i>Note: The map location of this report may be innacurate and is not endorsed by the BFRO. Please not contact the BFRO about the report location accuracy.</i></p>"//add disclaimer about report location.
+                layer.bindPopup(popupNoBadLoc.concat(disclaimer), {
+                    maxWidth: "300"
+                });
+                
+            }
+    });
+    // Call geoprocessing function from ArcGIS Server. This will run a script that keeps the geoJSON up to date.
+    require(["esri/tasks/Geoprocessor"], function(Geoprocessor) {
+        var gpUrl = "https://www.sgrc.selkirk.ca/gis-sandbox/rest/services/NorthRoss/Samsquanch/GPServer/Samsquanch";
+        var gp = new Geoprocessor(gpUrl);
+        gp.execute().then(drawResultData);
+        function drawResultData(result) {
+            console.log("Done");
+            }
+        });
+
+    // Add geoJSON to marker cluster layer, then add to map and update number of reports.
+    geojsonAjax.on('data:loaded', function () {
+            markers.addLayer(geojsonAjax);
+            mymap.addLayer(markers);
+            document.getElementById("intro").innerHTML = "This map displays the locations of "
+                +counter
+                +" reports of encounters with bigfoot/sasquatch creatures."
+                +" Please note that the report locations are known to be somewhat innacurate and are not endorsed by the BFRO. See Disclaimer below for more info."; //Display counter on sidebar
+        });
+
+    // Record coordinates of the last spot the user clicked on sidebar to make report submission of bad points easier:
+    mymap.on('click', function(e){
+        var coord = e.latlng;
+        var lat = coord.lat;
+        var lng = coord.lng;
+        document.getElementById("recentClick").innerHTML = "You last clicked the map at point: " + lat.toFixed(5) + ", " + lng.toFixed(5);
+        });
+    </script>
+
+</body>
+</html>
