@@ -25,9 +25,6 @@
     <link rel="stylesheet" href="javascript/MarkerCluster.css" />
     <link rel="stylesheet" href="javascript/MarkerCluster.Default.css" />
 
-    <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css" />
-    <script src="https://js.arcgis.com/4.18/"></script>
-
     <base target="_blank"/>
 </head>
 <body>
@@ -147,15 +144,15 @@
                 
             }
     });
-    // Call geoprocessing function from ArcGIS Server. This will run a script that keeps the geoJSON up to date.
-    require(["esri/tasks/Geoprocessor"], function(Geoprocessor) {
-        var gpUrl = "https://www.sgrc.selkirk.ca/gis-sandbox/rest/services/NorthRoss/Samsquanch/GPServer/Samsquanch";
-        var gp = new Geoprocessor(gpUrl);
-        gp.execute().then(drawResultData);
-        function drawResultData(result) {
-            console.log("Done");
-            }
-        });
+    // // Call geoprocessing function from ArcGIS Server. This will run a script that keeps the geoJSON up to date.
+    // require(["esri/tasks/Geoprocessor"], function(Geoprocessor) {
+    //     var gpUrl = "https://www.sgrc.selkirk.ca/gis-sandbox/rest/services/NorthRoss/Samsquanch/GPServer/Samsquanch";
+    //     var gp = new Geoprocessor(gpUrl);
+    //     gp.execute().then(drawResultData);
+    //     function drawResultData(result) {
+    //         console.log("Done");
+    //         }
+    //     });
 
     // Add geoJSON to marker cluster layer, then add to map and update number of reports.
     geojsonAjax.on('data:loaded', function () {
