@@ -107,13 +107,11 @@ def main():
         pointsjson.write(output)
 
     # commit and push to Github:
-    from github import Github
-    from github import InputGitTreeElement
-    user = "north-ross"
-    password = "***"
-    g = Github(user, password)
-    # I want to check if the created JSON above is identical to the one currently in the repo,
-    # and if it is different then commit and push the new JSON.
+    from git import Repo
+    repodir = r"D:\Documents\NorthsWebProjects\north-ross.github.io"
+    repo = Repo(repodir)
+
+    #test
 
     # https://stackoverflow.com/questions/63427607/python-upload-files-directly-to-github-using-pygithub
 
