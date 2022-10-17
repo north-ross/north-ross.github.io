@@ -1,18 +1,18 @@
 """
-Converting the most recent KML from BFRO.net into a geoJSON and uploading to the Selkirk student webserver.
-This script will be published as a geoprocessing service on Selkirk's ArcOnline server and called when the site is loaded to update the JSON. 
+Converting the most recent KML from BFRO.net into a geoJSON and uploading to pythonanywhere server.
+This script will scheduled to be run daily on pythonanywhere. 
 
 
 author: North Ross
-created: 2021-03-27
-python version: 3.6.9
+created: 2022-10-16
+python version: 3.10.7
 """
-import csv
+
 import requests
 import json
 import xml.etree.ElementTree as ET
 from zipfile import ZipFile
-from io import BytesIO, StringIO
+from io import BytesIO
 
 # Build XML parser:
 def parseXML(xmlfile):
@@ -74,40 +74,39 @@ def parseXML(xmlfile):
 
 def main():
 
-    # Check if JSON on site is up to date:
-    reqRSS = requests.get('http://www.bfro.net/GDB/NewAdditionsRss.asp')
-    reqJSON = requests.get('http://www.sgrc.selkirk.ca/students/northross/BFRO-Reports/BFRO_Points.json')
-    RSSstring = str(BytesIO(reqRSS.content).getvalue())
-    JSONstring = str(BytesIO(reqJSON.content).getvalue())
+    # # Check if JSON on site is up to date:
+    # reqRSS = requests.get('http://www.bfro.net/GDB/NewAdditionsRss.asp')
+    # # reqJSON = requests.get('https://www.pythonanywhere.com/user/northross/files/home/northross/BFRO/BFRO_Points.json')
+    # reqJSON = requests.get('http://localhost:8000/Documents/NorthsWebProjects/north-ross.github.io/BigfootMap/PythonServer/BFRO_Points.json')
+    # RSSstring = str(BytesIO(reqRSS.content).getvalue())
+    # JSONstring = str(BytesIO(reqJSON.content).getvalue())
 
-    lastestRepID = RSSstring[RSSstring.find('(Report ')+8:RSSstring.find(')</title>')]
-    print('Latest report #:', lastestRepID)
-    if lastestRepID in JSONstring:
-        print('BFRO_Points.json is up to date')
-    else:
-        print('Updating BFRO_Points.json')
+    # lastestRepID = RSSstring[RSSstring.find('(Report ')+8:RSSstring.find(')</title>')]
+    # print('Latest report #:', lastestRepID)
+    # if lastestRepID in JSONstring:
+    #     print('BFRO_Points.json is up to date')
+    # else:
+    #     print('Updating BFRO_Points.json')
 
         # Request the most recent KML from BFRO.net
-        kmlUrl = 'http://www.bfro.net/app/AllReportsKMZ.aspx'
-        r = requests.get(kmlUrl)
+    kmlUrl = 'http://www.bfro.net/app/AllReportsKMZ.aspx'
+    r = requests.get(kmlUrl)
 
-        filebytes = BytesIO(r.content)
-        kmz = ZipFile(filebytes, 'r')
-        kml = kmz.open('doc.kml', 'r')
-    
-        # Parse KML, return dictionary
-        features = parseXML(kml)
+    filebytes = BytesIO(r.content)
+    kmz = ZipFile(filebytes, 'r')
+    kml = kmz.open('doc.kml', 'r')
 
-        # Write to JSON:
-        with open(r'C:\inetpub\wwwroot\students\northross\BFRO-Reports\BFRO_Points.json', 'w') as pointsjson:
-        # with open(r'Q:\northross\GIS325\Project\KML_toJSON_web\javascript\test_2020-04-06.json', 'w') as testjson:
-            output = json.dumps(features)
-            pointsjson.write(output)
+    # Parse KML, return dictionary
+    features = parseXML(kml)
+
+    # Write to JSON:
+    with open('home\\northross\\BFRO\\BFRO_Points.json', 'w') as pointsjson:
+    # with open(r'Q:\northross\GIS325\Project\KML_toJSON_web\javascript\test_2020-04-06.json', 'w') as testjson:
+        output = json.dumps(features)
+        pointsjson.write(output)
 
       
       
 if __name__ == "__main__":
-  
-    # calling main function
     main()
   
