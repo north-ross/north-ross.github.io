@@ -111,14 +111,23 @@ def main():
     repodir = r"D:\Documents\NorthsWebProjects\north-ross.github.io"
     repo = Repo(repodir)
 
+    #%%
     #test
     import subprocess
-    result = subprocess.run(
+    from datetime import date
+    
+    subprocess.run(r"cd /d D:\Documents\NorthsWebProjects\north-ross.github.io")
+    
+    subprocess.run("git add .")
 
-    )
-
-    # https://stackoverflow.com/questions/63427607/python-upload-files-directly-to-github-using-pygithub
-
+    # commit = subprocess.run(f'git commit -m "points update{date.today()}"', capture_output=True, encoding='UTF-8')
+    #######
+    # commit
+    
+    # get results and if there is change then push
+    # cmd = "git push"
+    # subprocess.call(cmd, shell=True)
+#%%
       
 if __name__ == "__main__":
     main()
