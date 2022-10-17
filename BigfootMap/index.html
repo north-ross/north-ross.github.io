@@ -65,7 +65,7 @@
                         the spatial component to their database public in 2019. This map's author decided that this information is interesting, despite its errors, and that the approximate locations
                         provide an engaging way to explore the BFRO's vast database of credible sightings. However, this map remains unaffiliated with the BFRO website.</p>
                     <p><b>Do not contact the BFRO with any concerns about location accuracy. The BFRO does not endorse the accuracy of these locations.</b> </p>
-                    <p>If you have feedback about the map, contact the author at northarperross [at] gmail [dot] com</p>
+                    <p>If you have feedback about the map, contact the author at northarperross [at] gmail [dot] com or on <a href = "https://github.com/north-ross/">GitHub</a></p>
                     <p>A future project for the BFRO would go through the reports database and clean up erroenous locations, although this project is unlikely to be undertaken soon.</p>
                 </div>
                 <i><p id="recentClick">You last clicked the map at point: </p></i>
@@ -109,8 +109,7 @@
     L.control.layers(basemaps).addTo(mymap);
 
     // GeoJSON of report points:
-    // var geoJSONUrl="http://www.sgrc.selkirk.ca/students/northross/BFRO-Reports/BFRO_Points.json";
-    var geoJSONUrl="BFRO_Points.json";
+    var geoJSONUrl="https://www.pythonanywhere.com/user/northross/files/home/northross/BFRO/BFRO_Points.json";
     var markers = L.markerClusterGroup();
 
     // Style function for the geojson layer: based on classification
