@@ -75,7 +75,8 @@ def parseXML(xmlfile):
 
 def main():
 
-    # # Check if JSON on site is up to date:
+    # # Check if JSON on site is up to date 
+    # #(removed oct 2022 since it seems the kml is sometimes not up to date with RSS feed, making this useless...)
     # reqRSS = requests.get('http://www.bfro.net/GDB/NewAdditionsRss.asp')
     # # reqJSON = requests.get('https://www.pythonanywhere.com/user/northross/files/home/northross/BFRO/BFRO_Points.json')
     # reqJSON = requests.get('http://localhost:8000/Documents/NorthsWebProjects/north-ross.github.io/BigfootMap/PythonServer/BFRO_Points.json')
@@ -89,7 +90,7 @@ def main():
     # else:
     #     print('Updating BFRO_Points.json')
 
-        # Request the most recent KML from BFRO.net
+    # Request the most recent KML from BFRO.net
     kmlUrl = 'http://www.bfro.net/app/AllReportsKMZ.aspx'
     r = requests.get(kmlUrl)
 
@@ -102,33 +103,21 @@ def main():
 
     # Write to JSON:
     with open(r'D:\Documents\NorthsWebProjects\north-ross.github.io\BigfootMap\BFRO_Points.json', 'w') as pointsjson:
-    # with open(r'Q:\northross\GIS325\Project\KML_toJSON_web\javascript\test_2020-04-06.json', 'w') as testjson:
         output = json.dumps(features)
         pointsjson.write(output)
 
     # commit and push to Github:
-    from git import Repo
-    repodir = r"D:\Documents\NorthsWebProjects\north-ross.github.io"
-    repo = Repo(repodir)
-
-    #%%
-    #test
     import subprocess
-    from datetime import date
-    
-    subprocess.run(r"cd /d D:\Documents\NorthsWebProjects\north-ross.github.io")
-    
-    subprocess.run("git add .")
+    gitdir = r"D:\Documents\NorthsWebProjects\north-ross.github.io"
 
-    # commit = subprocess.run(f'git commit -m "points update{date.today()}"', capture_output=True, encoding='UTF-8')
-    #######
-    # commit
-    
-    # get results and if there is change then push
-    # cmd = "git push"
-    # subprocess.call(cmd, shell=True)
-#%%
-      
+    subprocess.run("git add .", cwd = gitdir)
+
+    commit = subprocess.run('git commit -m "points update python"', cwd = gitdir)
+
+    if commit.returncode == 0:
+         subprocess.run("git push origin main", cwd = gitdir)
+
+
 if __name__ == "__main__":
     main()
   
