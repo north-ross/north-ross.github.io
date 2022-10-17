@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 from zipfile import ZipFile
 from io import BytesIO
 
+
 # Build XML parser:
 def parseXML(xmlfile):
   
@@ -100,12 +101,22 @@ def main():
     features = parseXML(kml)
 
     # Write to JSON:
-    with open('home\\northross\\BFRO\\BFRO_Points.json', 'w') as pointsjson:
+    with open(r'D:\Documents\NorthsWebProjects\north-ross.github.io\BigfootMap\BFRO_Points.json', 'w') as pointsjson:
     # with open(r'Q:\northross\GIS325\Project\KML_toJSON_web\javascript\test_2020-04-06.json', 'w') as testjson:
         output = json.dumps(features)
         pointsjson.write(output)
 
-      
+    # commit and push to Github:
+    from github import Github
+    from github import InputGitTreeElement
+    user = "north-ross"
+    password = "***"
+    g = Github(user, password)
+    # I want to check if the created JSON above is identical to the one currently in the repo,
+    # and if it is different then commit and push the new JSON.
+
+    # https://stackoverflow.com/questions/63427607/python-upload-files-directly-to-github-using-pygithub
+
       
 if __name__ == "__main__":
     main()
