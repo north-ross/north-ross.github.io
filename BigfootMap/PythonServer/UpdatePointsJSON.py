@@ -112,6 +112,10 @@ def main():
     repo = Repo(repodir)
 
     #test
+    import subprocess
+    result = subprocess.run(
+
+    )
 
     # https://stackoverflow.com/questions/63427607/python-upload-files-directly-to-github-using-pygithub
 
