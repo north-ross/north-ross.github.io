@@ -106,7 +106,7 @@
     L.control.layers(basemaps).addTo(mymap);
 
     // GeoJSON of report points:
-    var geoJSONUrl="https://www.pythonanywhere.com/user/northross/files/home/northross/BFRO/BFRO_Points.json";
+    var geoJSONUrl="BFRO_Points.json";
     var markers = L.markerClusterGroup();
 
     // Style function for the geojson layer: based on classification
@@ -144,15 +144,6 @@
                 
             }
     });
-    // // Call geoprocessing function from ArcGIS Server. This will run a script that keeps the geoJSON up to date.
-    // require(["esri/tasks/Geoprocessor"], function(Geoprocessor) {
-    //     var gpUrl = "https://www.sgrc.selkirk.ca/gis-sandbox/rest/services/NorthRoss/Samsquanch/GPServer/Samsquanch";
-    //     var gp = new Geoprocessor(gpUrl);
-    //     gp.execute().then(drawResultData);
-    //     function drawResultData(result) {
-    //         console.log("Done");
-    //         }
-    //     });
 
     // Add geoJSON to marker cluster layer, then add to map and update number of reports.
     geojsonAjax.on('data:loaded', function () {
