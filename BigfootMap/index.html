@@ -91,7 +91,7 @@
     } 
     
     // Map elememts:
-    var mymap = L.map('mapid').setView([42, -95], 4);
+    var mymap = L.map('mapid').setView([45, -95], 4);
     L.control.scale().addTo(mymap);
 
     // Base maps:
@@ -156,12 +156,12 @@
         });
 
     // Record coordinates of the last spot the user clicked on sidebar to make report submission of bad points easier:
-    mymap.on('click', function(e){
-        var coord = e.latlng;
-        var lat = coord.lat;
-        var lng = coord.lng;
-        document.getElementById("recentClick").innerHTML = "You last clicked the map at point: " + lat.toFixed(5) + ", " + lng.toFixed(5);
-        });
+    // mymap.on('click', function(e){
+    //     var coord = e.latlng;
+    //     var lat = coord.lat;
+    //     var lng = coord.lng;
+    //     document.getElementById("recentClick").innerHTML = "You last clicked the map at point: " + lat.toFixed(5) + ", " + lng.toFixed(5);
+    //     });
     </script>
 
 </body>
