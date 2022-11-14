@@ -130,17 +130,68 @@
                 fillOpacity: 0.7
             }
         },
+
+
+        // versions of pointToLayer trying to use the circles.. first one works but only draws circles so some points are small
+        // second one sort of works but the circles and points get clustered together, and other issues
+        // third one uses no circles.
         pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng)
+            
+            if (feature.properties.errorRadius) {
+                
+                // let MyMarker = new L.circleMarker(latlng);
+                // let MyCircle = new L.Circle(latlng, feature.properties.errorRadius);
+                
+                // return new L.layerGroup([MyMarker, MyCircle]);
+                return new L.Circle(latlng, feature.properties.errorRadius);
+            } else {
+                
+                return new L.circleMarker(latlng);
+            }
         },
+
+        // pointToLayer: function (feature, latlng) {
+            // console.log('1')
+            // let oMyMarker = L.circleMarker(latlng);
+            
+            // let oMyRect = new L.Circle(latlng, feature.properties.errorRadius);
+            
+            // let oLayer = L.layerGroup([oMyMarker, oMyRect]);
+            // console.log('2')
+            // if (typeof oLayer.getLatLng === 'undefined')
+            // {
+            //     if (typeof oLayer._latlng === 'undefined') oLayer._latlng = latlng;
+            //     oLayer.getLatLng = function () { return this._latlng; };
+            //     if (typeof oLayer.setLatLng === 'undefined')
+            //     {
+            //         oLayer.setLatLng = function (val_latlng) { this._latlng = val_latlng; return; };
+            //     }
+            // }
+            // console.log('3')
+            // return oLayer;
+
+        // },
+
+        // pointToLayer: function (feature, latlng) {
+        //     return new L.circleMarker(latlng);
+        // },
+
+
         onEachFeature: function (feature, layer){
                 counter++; // Keep counter to display number of points
-                var popContent=feature.properties.popup
-                var popupNoBadLoc = popContent.substring(0,popContent.search("BadLocationID=") - 59) // Remove the link to a form to report bad locations from popup. 
+                var badLocationURL = `https://docs.google.com/forms/d/e/1FAIpQLSfD_DJKephBxmKpyoR9LDg29VwHHmXLq5YIcwSb-c2PR4RTfg/viewform?usp=pp_url&entry.375276081=${feature.properties.name}`
+                var popContentNew = `<img src="http://www.bfro.net/images/bfroicon-i.jpg" vspace="0" hspace="0" width="50" height="26" align="right" /><b>${feature.properties.title}
+                    </b><br /><a href="http://www.bfro.net/gdb/classify.asp#classification">${feature.properties.class}</a>
+                    <center><b><a href="http://www.bfro.net/GDB/show_report.asp?id=${feature.properties.name}">Click for details</a></b></center>
+                    <br /><center><i>(<a href="${badLocationURL}">Location look wrong?</a>)</i></center>`
+                    "<description><img src=\"http://www.bfro.net/images/bfroicon-i.jpg\" vspace=\"0\" hspace=\"0\" width=\"50\" height=\"26\" align=\"right\" /><b>          Report 9317: Driver on Alcan Highway has noon, road encounter near Alaska-Canada border</b><br /><a href=\"http://www.bfro.net/gdb/classify.asp#classification\">Class A</a>; Southeast Fairbanks County<center><b><a href=\"http://www.bfro.net/GDB/show_report.asp?id=9317\">Click for details</a></b></center><br /><center><i>(<a href=\"http://www.bfro.net/gdb/comments.asp?BadLocationID=9317\">Location look wrong?</a>)</i></center></description>"
                 var disclaimer = "<p style:\"color:red\"><i>Note: The map location of this report may be innacurate and is not endorsed by the BFRO. Please not contact the BFRO about the report location accuracy.</i></p>"//add disclaimer about report location.
-                layer.bindPopup(popupNoBadLoc.concat(disclaimer), {
+                var errorRadius = `Error: ${feature.properties.errorRadius}m`
+                layer.bindPopup(popContentNew.concat(errorRadius), {
                     maxWidth: "300"
                 });
+
+                
                 
             }
     });
@@ -156,12 +207,21 @@
         });
 
     // Record coordinates of the last spot the user clicked on sidebar to make report submission of bad points easier:
-    // mymap.on('click', function(e){
-    //     var coord = e.latlng;
-    //     var lat = coord.lat;
-    //     var lng = coord.lng;
-    //     document.getElementById("recentClick").innerHTML = "You last clicked the map at point: " + lat.toFixed(5) + ", " + lng.toFixed(5);
-    //     });
+    mymap.on('click', function(e){
+        var coord = e.latlng;
+        var lat = coord.lat;
+        var lng = coord.lng;
+        document.getElementById("recentClick").innerHTML = "You last clicked the map at point: " + lat.toFixed(5) + ", " + lng.toFixed(5);
+        });
+
+    markers.getLayers().forEach(function(l) {
+        if (l instanceof L.Marker) {
+            L.circle(l.getLatLng(), 1609.34, {
+                color: 'blue',
+                fillColor: 'blue'
+            }).addTo(map);
+        }
+    });
     </script>
 
 </body>
