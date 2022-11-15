@@ -123,7 +123,7 @@ def parseXML(xmlfile):
                     area = abs(geod.geometry_area_perimeter(poly)[0])
 
 
-                    radius = round((area/3.1416)**0.5, 1)
+                    radius = round((area/3.1416)**0.5)
                     if features['features'][-1]['properties']['name'] == polyReportID:
                         features['features'][-1]['properties']['errorRadius'] = radius
                     else: 
@@ -201,7 +201,7 @@ def main():
             # check if coordinates are generally located in north america:
                 if not 17.0 < float(coordsList[0]) < 84.0 or not -202 < float(coordsList[1]) < -41.37:
                     # TO ADD - try checking if the user just forgot to add a - for the longitude
-                    
+                    # also try removing non numeric/math chars with regex
                     BadPointEmail(reportid, "Coordinates out of range")
                 else: 
                     # add line to dict
@@ -220,6 +220,7 @@ def main():
             print(f"to {correctionsDict[featureID]['Updated Coordinates']}")
             feature['properties']['correctedTime'] = correctionsDict[featureID]['Timestamp']
             feature['properties']['correctedBy'] = correctionsDict[featureID]['Your Name (optional)']
+            feature['properties']['errorRadius'] = correctionsDict[featureID]['Error Radius'] #check it is valid maybe
             updateCount += 1
     print(f"{updateCount} points updated from user submissions")
     #%%
