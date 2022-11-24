@@ -3,15 +3,12 @@ Converting the most recent KML from BFRO.net into a geoJSON and publishing to Gi
 This script is scheduled to be run weekly on my PC. 
 
 To do: TESTING especially coordinate handling
+Fix BadPoints.csv not writing certain coordinates
 Move CSV reading to its own function to be called later
-Add email function to notify me of bad corrections
-Update website with instructions on how to submit form
 
 Low priority:
 Fix escape character backslash displaying on popup (ie report 637)
-Interpret the range polygons on some of the points in the KML as a radius. Either display on popup or as radius circle in leaflet when the point is clicked on (if possible)
- first interpret the polygon coords in the kml to get a radius 
- add function to onEachFeature, listen for mouseover then draw L.circle with radius = feature.properties.error
+
 
 
 author: North Ross
@@ -30,6 +27,7 @@ from io import BytesIO
 import csv
 import subprocess
 import os
+from win10toast import ToastNotifier
 
 #%%
 # Build XML parser:
@@ -129,16 +127,13 @@ def parseXML(xmlfile):
                     else: 
                         print("couldn't find point for report {polyReportID}")
                         polyMissingPtList.append({polyReportID: radius})
-
-        # to add: loop over polyMissingPtList and add radius to point properties
       
     # return features dictionary
     print(count, 'points found')
     print(f"{len(badPolys)} bad polygons")
     return features
-def BadPointEmail(id, issue):
-    #send email if point is bad
-    print(f"SEND BAD EMAIL ABOUT {id} because {issue}")
+def BadPointPrint(id, issue):
+    print(f"Report #{id} coords invalid because {issue}")
 def GitUpload():
     #push changes to github and update github page
     # commit and push to Github:
@@ -155,28 +150,18 @@ def GitUpload():
 #%%
 def main():
     #%%
-    # kmlUrl = 'http://www.bfro.net/app/AllReportsKMZ.aspx'
-    # r = requests.get(kmlUrl)
+    kmlUrl = 'http://www.bfro.net/app/AllReportsKMZ.aspx'
+    r = requests.get(kmlUrl)
 
-    # filebytes = BytesIO(r.content)
-    # kmz = ZipFile(filebytes, 'r')
-    # kml = kmz.open('doc.kml', 'r')
+    filebytes = BytesIO(r.content)
+    kmz = ZipFile(filebytes, 'r')
+    kml = kmz.open('doc.kml', 'r')
 
     # Parse KML, return dictionary
     
-    kml = f"D:\Documents\Maps\BigfootMap\BFROReports.kml"
+    # kml = f"D:\Documents\Maps\BigfootMap\BFROReports.kml"
     features = parseXML(kml)
 
-    
-    # # Write to JSON:
-    # # probably no need since I do this later after correcting points.
-    # jsonfile = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'BFRO_Points.json'))
-    # with open(jsonfile, 'w') as pointsjson:
-    #     output = json.dumps(features)
-    #     pointsjson.write(output)
-    #     # I think this next step is not important and i can jst use my features dict from the kml
-    #     pointsDict = json.loads(output) #store points as dict 
-    #     output = None # clear large str from memory
     
     # read csv of suggested changes (collected from google form) and write to nested dict with reportid as key
     # move this to its own function and TEST especially bad coordinate handling.
@@ -190,37 +175,63 @@ def main():
         # decoded_content = download.content.decode('utf-8')
         # reader = csv.DictReader(decoded_content.splitlines(), delimiter=',')
         reader = csv.DictReader(testcsv, delimiter=',')
+        BadPointList=[]
         for line in reader:
-            reportid = line.pop('Report ID')
-
-            # validate coordinates and cast to list of floats:
+            if 'Report ID' in line.keys():
+                reportid = line.pop('Report ID')
+            # try to cast error radius to float:
+            radiusNumeric = re.findall('[0-9]+', line['Report area radius'].strip())
             try: 
-                coordsList = line['Updated Coordinates'].split(', ')
-                coordsList = [ float(x) for x in coordsList ]
-                # print(coordsList[::-1])
-            # check if coordinates are generally located in north america:
-                if not 17.0 < float(coordsList[0]) < 84.0 or not -202 < float(coordsList[1]) < -41.37:
-                    # TO ADD - try checking if the user just forgot to add a - for the longitude
-                    # also try removing non numeric/math chars with regex
-                    BadPointEmail(reportid, "Coordinates out of range")
-                else: 
-                    # add line to dict
-                    line['Updated Coordinates'] = coordsList[::-1]
-                    correctionsDict[reportid] = line
+                floatRadius = float(radiusNumeric)
+                if floatRadius < 0:
+                    floatRadius = None
+            except: 
+                floatRadius = None
+            # validate coordinates and cast to list of floats:
+            line['Issue'] = ""
+            badCSVstr = r"D:\Documents\NorthsWebProjects\north-ross.github.io\BigfootMap\PythonServer\BadPoints.csv"
+            with open(badCSVstr, 'w') as badCSV:
+                badWriter = csv.DictWriter(badCSV, line.keys())
+                badWriter.writeheader()
+                
+                try: 
+                    coordsList = line['Updated Coordinates'].split(',')
+                    coordsList = [ float(x.strip()) for x in coordsList ]
+                    # check if coordinates are generally located in north america:
+                    if not 17.0 < float(coordsList[0]) < 84.0 or not -202 < float(coordsList[1]) < -41.37:
+                        # TO ADD - try checking if the user just forgot to add a - for the longitude
+                        # also try removing non numeric/math chars with regex
+                        line['Issue'] = "Coordinates out of range"
+                        BadPointPrint(reportid, line['Issue'])
+                        BadPointList.append(reportid)
+                        badWriter.writerow(line)
+                        print(line)
+                    else: 
+                        # add line to dict
+                        line['Updated Coordinates'] = coordsList[::-1]
+                        correctionsDict[reportid] = line
+                except: 
+                    line['Issue'] = 'Invalid Coords'
+                    BadPointPrint(reportid, line['Issue'])
+                    BadPointList.append(reportid)
+                    badWriter.writerow(line) # not working....
+                    print(line)
 
-            except: BadPointEmail(reportid, "Unreadable coordinates")
+
             
     updateCount = 0
     print("\n\n")
     for feature in features['features']:
         featureID = feature['properties']['name']
         if  featureID in correctionsDict.keys():
-            print(f"replacing report {featureID} coords from  {feature['geometry']['coordinates']}")
+            print(f"replacing report {featureID} coords from {feature['geometry']['coordinates']} ", end="")
             feature['geometry']['coordinates'] = correctionsDict[featureID]['Updated Coordinates']
             print(f"to {correctionsDict[featureID]['Updated Coordinates']}")
-            feature['properties']['correctedTime'] = correctionsDict[featureID]['Timestamp']
-            feature['properties']['correctedBy'] = correctionsDict[featureID]['Your Name (optional)']
-            feature['properties']['errorRadius'] = correctionsDict[featureID]['Error Radius'] #check it is valid maybe
+            feature['properties']['correctedTime'] = correctionsDict[featureID]['Timestamp'].split(' ')[0]
+            if 'Your Name (optional)' in correctionsDict[featureID].keys():
+                feature['properties']['correctedBy'] = correctionsDict[featureID]['Your Name (optional)']
+            if floatRadius != None:
+                feature['properties']['errorRadius'] = floatRadius
             updateCount += 1
     print(f"{updateCount} points updated from user submissions")
     #%%
@@ -230,10 +241,13 @@ def main():
         output = json.dumps(features)
         pointsjson.write(output)
     
-            #%%
+    #%%
     
-    # GitUpload()
-    
+    GitUpload()
+
+    if len(BadPointList) != 0:
+        n = ToastNotifier()
+        n.show_toast("BFRO Points Updater", f"{len(BadPointList)} bad points were found in google sheet. Review BadPointCSV.")
 #%%
 
 if __name__ == "__main__":

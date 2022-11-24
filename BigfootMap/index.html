@@ -4,7 +4,7 @@
 	
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFRO Report Locations</title>
+    <title>Unofficial BFRO Report Locations Explorer</title>
     <meta property="og:image" content="thumbnail.jpg">
     <meta property="og:title" content="Bigfoot Field Researchers Organization: Sasquatch Sightings and Reports Locations">
     <meta name="description" content="This map displays the locations of over 4000 reports of encounters with bigfoot/sasquatch creatures.">
@@ -25,6 +25,27 @@
     <link rel="stylesheet" href="javascript/MarkerCluster.css" />
     <link rel="stylesheet" href="javascript/MarkerCluster.Default.css" />
 
+    <style>
+        .leaflet-popup-content-wrapper{
+            text-align: right;
+        }
+        .leaflet-popup-content-wrapper, .leaflet-popup.tip {
+            background-color: #003333;
+            color: white;
+        }
+        .leaflet-popup-content a{
+            color:#c0c0ff;
+        }
+        
+        .leaflet-popup-content hr{
+            color: #009900;
+            size: 2;
+            border-radius: 2;
+            margin: 10px;
+            border-top: 2px solid #009900;
+        }
+    </style>
+
     <base target="_blank"/>
 </head>
 <body>
@@ -32,12 +53,12 @@
       <div id="container">
         <div id="sidebar">
             <div id="bfheader">
-                <a href = "https://www.bfro.net"><img src="https://www.bfro.net/images/templates/LogoSpin.gif?a;a;a;a;a;" alt="BFRO logo" style="float: left;" ></a>
-                <p style = "padding: 20px 0"><b>Bigfoot Field Researchers Organization: Sasquatch Sightings and Reports</b></p>
+                <a href = "https://www.bfro.net"><img src="boggyCreekStill.png" alt="BFRO logo" style="float: left;" ></a>
+                <p style = "padding: 20px 0"><b>Bigfoot Field Researchers Organization: Sasquatch Reports Explorer (Unofficial)</b></p>
             </div>
             <div style="clear: left;">
-                <p style="color:brown; font-size: 14; text-align: center;"><b>UNOFFICIAL: This page not affiliated with the BFRO.</b></p>
-                <p id="intro">This map displays the locations of over 4000 reports of encounters with bigfoot/sasquatch creatures. 
+                <!-- <p style="color:brown; font-size: 14; text-align: center;"><b>UNOFFICIAL: This page not affiliated with the BFRO.</b></p> -->
+                <p id="intro">This map displays the locations of over 4000 reports of encounters with bigfoot/sasquatch creatures, collected and curated by the <a href='http://www.bfro.net/'>Bigfoot Field Researchers Association</a> (BFRO). 
                     Please note that the report locations are known to be somewhat innacurate and are not endorsed by the BFRO. See Disclaimer below for more info.
                 </p>
                 
@@ -58,12 +79,16 @@
                 </div>
                 <button type="button" class="collapsible">Disclaimer</button>
                 <div class="content">
+                    <p>This open-source project uses data downloaded from the Bigfoot Field Research Organization.</p>
                     <p>For a number of reasons, many of the locations displayed on this map do not reflect the actual location of the incident. For this reason, the BFRO discontinued making
                         the spatial component to their database public in 2019. This map's author decided that this information is interesting, despite its errors, and that the approximate locations
                         provide an engaging way to explore the BFRO's vast database of credible sightings. However, this map remains unaffiliated with the BFRO website.</p>
                     <p><b>Do not contact the BFRO with any concerns about location accuracy. The BFRO does not endorse the accuracy of these locations.</b> </p>
+                    
+                    <p>If you notice a bad location, feel free to click the <i>Location look wrong?</i> link in the popup and try to fill out the form with a new location. If you can find
+                        some valid coordinates for the location from reading the report and doing some detective work, please submit these with the form and the point will be updated
+                        by the next weekly site update.</p>
                     <p>If you have feedback about the map, contact the author at northarperross [at] gmail [dot] com or on <a href = "https://github.com/north-ross/">GitHub</a></p>
-                    <p>A future project for the BFRO would go through the reports database and clean up erroenous locations, although this project is unlikely to be undertaken soon.</p>
                 </div>
                 <i><p id="recentClick">You last clicked the map at point: </p></i>
 
@@ -140,26 +165,29 @@
 
                 // Popup:
                 var badLocationURL = `https://docs.google.com/forms/d/e/1FAIpQLSfD_DJKephBxmKpyoR9LDg29VwHHmXLq5YIcwSb-c2PR4RTfg/viewform?usp=pp_url&entry.375276081=${feature.properties.name}`,
-                    popContent = `<img src="http://www.bfro.net/images/bfroicon-i.jpg" vspace="0" hspace="0" width="50" height="26" align="right" /><b>${feature.properties.title}
-                    </b><br /><a href="http://www.bfro.net/gdb/classify.asp#classification">${feature.properties.class}</a>
-                    <center><b><a href="http://www.bfro.net/GDB/show_report.asp?id=${feature.properties.name}">Click for details</a></b></center>
-                    <br /><center><i>(<a href="${badLocationURL}">Location look wrong?</a>)</i></center>`,
-                    disclaimer = "<p style:\"color:red\"><i>Note: The map location of this report may be innacurate and is not endorsed by the BFRO. Please not contact the BFRO about the report location accuracy.</i></p>",//add disclaimer about report location.
-                    errorRadius = `Error: ${feature.properties.errorRadius}m`
+                    popContent = `<a href="http://www.bfro.net/GDB/show_report.asp?id=${feature.properties.name}"><p style="text-align: center; color: white"><b>${feature.properties.title}
+                    </b></p><hr>
+                    <span style="text-align: left"><i><a href="${badLocationURL}"'>Click to report bad location</a></i></span>`,
+                    disclaimer = "<p style:\"color:red\"><i>Note: The map location of this report may be innacurate and is not endorsed by the BFRO. Please not contact the BFRO about the report location accuracy.</i></p>";//add disclaimer about report location.
+                if (feature.properties.errorRadius){
+                    var errorRadius = Math.round(feature.properties.errorRadius / 100) * 100
+                    var errorRadius = `<br>Location accuracy: ${errorRadius.toLocaleString('en-US')}m`;
+                } else {var errorRadius = ""};
                 if (feature.properties.correctedTime){
                     var correction = `<br><i>Corrected ${feature.properties.correctedTime} by ${feature.properties.correctedBy}</i>`
-                } else {var correction = ""}
+                } else {var correction = ""};
                 layer.bindPopup(popContent.concat(errorRadius, correction), {
                     maxWidth: "300"
                 });
 
-                
+                // Area circle:
                 if (feature.properties.errorRadius){
                     var reportArea = L.circle(layer.getLatLng(), {
                         radius: feature.properties.errorRadius,
-                        interactive: false});
-                    console.log(layer.getLatLng())
-                    console.log("defined reportArea")
+                        opacity: 0.2,
+                        fillOpacity: 0.7,
+                        fillColor: '#daa520',
+                        color: '#b8860b'});
                     } else {
                         var reportArea = L.circle(layer.getLatLng(), {
                             interactive: false, 
@@ -168,24 +196,18 @@
                             fillOpacity: 0
                             })};
                 
-                function onClick(e){
-                    console.log("click")
+                function mouseOut(e){mymap.removeLayer(reportArea)};
+                function mouseOver(e){
                     if(mymap.hasLayer(reportArea)){
-                        console.log("remove")
                         mymap.removeLayer(reportArea);
                     }
                     else {
-                        mymap.addLayer(reportArea);
-                        console.log('add')
-                        console.log(reportArea)
+                        mymap.addLayer(reportArea)
+                        reportArea.bringToBack()
+                        reportArea.on({mouseout: mouseOut});
                     }
                 };
-                layer.on({ 
-                    click: onClick
-                });
-                
-                
-                
+                layer.on({mouseover: mouseOver});
             }
     });
 
@@ -194,8 +216,8 @@
             markers.addLayer(geojsonAjax);
             mymap.addLayer(markers);
             document.getElementById("intro").innerHTML = "This map displays the locations of "
-                +counter
-                +" reports of encounters with bigfoot/sasquatch creatures."
+                +counter.toLocaleString('en-US')
+                +" reports of encounters with bigfoot/sasquatch creatures, collected and curated by the <a href='http://www.bfro.net/'>Bigfoot Field Researchers Association</a> (BFRO)."
                 +" Please note that the report locations are known to be somewhat innacurate and are not endorsed by the BFRO. See Disclaimer below for more info."; //Display counter on sidebar
         });
 
@@ -204,7 +226,7 @@
         var coord = e.latlng;
         var lat = coord.lat;
         var lng = coord.lng;
-        document.getElementById("recentClick").innerHTML = "You last clicked the map at point: " + lat.toFixed(5) + ", " + lng.toFixed(5);
+        document.getElementById("recentClick").innerHTML = "You last clicked the map at point: " + lat.toFixed(4) + ", " + lng.toFixed(4);
         });
 
     markers.getLayers().forEach(function(l) {
