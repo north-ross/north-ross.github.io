@@ -25,27 +25,6 @@
     <link rel="stylesheet" href="javascript/MarkerCluster.css" />
     <link rel="stylesheet" href="javascript/MarkerCluster.Default.css" />
 
-    <style>
-        .leaflet-popup-content-wrapper{
-            text-align: right;
-        }
-        .leaflet-popup-content-wrapper, .leaflet-popup.tip {
-            background-color: #003333;
-            color: white;
-        }
-        .leaflet-popup-content a{
-            color:#c0c0ff;
-        }
-        
-        .leaflet-popup-content hr{
-            color: #009900;
-            size: 2;
-            border-radius: 2;
-            margin: 10px;
-            border-top: 2px solid #009900;
-        }
-    </style>
-
     <base target="_blank"/>
 </head>
 <body>
@@ -163,13 +142,15 @@
 
                 // Popup:
                 var badLocationURL = `https://docs.google.com/forms/d/e/1FAIpQLSfD_DJKephBxmKpyoR9LDg29VwHHmXLq5YIcwSb-c2PR4RTfg/viewform?usp=pp_url&entry.375276081=${feature.properties.name}`,
-                    popContent = `<a href="http://www.bfro.net/GDB/show_report.asp?id=${feature.properties.name}"><p style="text-align: center; color: white"><b>${feature.properties.title}
-                    </b></p><hr>
-                    <span style="text-align: left"><i><a href="${badLocationURL}"'>Click to report bad location</a></i></span>`,
+                    popContent = `<a href="http://www.bfro.net/GDB/show_report.asp?id=${feature.properties.name}">
+                        <p style="text-align: center; color: white"><b>${feature.properties.title}
+                        </b></p><hr>
+                        <span style="text-align: left"><i><a href="${badLocationURL}">Location look wrong? Click to report.</a></i>
+                        </span>`,
                     disclaimer = "<p style:\"color:red\"><i>Note: The map location of this report may be innacurate and is not endorsed by the BFRO. Please not contact the BFRO about the report location accuracy.</i></p>";//add disclaimer about report location.
                 if (feature.properties.errorRadius){
                     var errorRadius = Math.round(feature.properties.errorRadius / 100) * 100
-                    var errorRadius = `<br>Location accuracy: ${errorRadius.toLocaleString('en-US')}m`;
+                    var errorRadius = `<br><span style="text-align: left">Location accuracy: ${errorRadius.toLocaleString('en-US')}m</span>`;
                 } else {var errorRadius = ""};
                 if (feature.properties.correctedTime){
                     var correction = `<br><i>Corrected ${feature.properties.correctedTime} by ${feature.properties.correctedBy}</i>`

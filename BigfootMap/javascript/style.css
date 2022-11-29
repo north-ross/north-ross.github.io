@@ -100,4 +100,23 @@ html, body, #container {
     display: none;
   }
   }
+
+.leaflet-popup-content-wrapper{
+    text-align: right;
+}
+.leaflet-popup-content-wrapper, .leaflet-popup.tip {
+    background-color: #003333;
+    color: white;
+}
+.leaflet-popup-content a{
+    color:#c0c0ff;
+}
+
+.leaflet-popup-content hr{
+    color: #009900;
+    size: 2;
+    border-radius: 2;
+    margin: 10px;
+    border-top: 2px solid #009900;
+}
   
