@@ -169,12 +169,12 @@ def main():
     #%%
     csvUrl = "https://docs.google.com/spreadsheets/d/1mE6If-j1BgB3X0AS3zZlLboPv0_oDoP9g_DptUYmV7o/export?gid=142859818&format=csv"
     correctionsDict = {}
-    # with requests.Session() as s:
-    with open('test.csv') as testcsv:
-        # download = s.get(csvUrl)
-        # decoded_content = download.content.decode('utf-8')
-        # reader = csv.DictReader(decoded_content.splitlines(), delimiter=',')
-        reader = csv.DictReader(testcsv, delimiter=',')
+    with requests.Session() as s:
+    # with open('test.csv') as testcsv:
+        download = s.get(csvUrl)
+        decoded_content = download.content.decode('utf-8')
+        reader = csv.DictReader(decoded_content.splitlines(), delimiter=',')
+        # reader = csv.DictReader(testcsv, delimiter=',')
         BadPointList=[]
         for line in reader:
             if 'Report ID' in line.keys():
