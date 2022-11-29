@@ -53,15 +53,35 @@ html, body, #container {
     cursor: pointer;
     padding: 5px;
     width: 100%;
-    border: none;
+    border: 1px solid black;
     text-align: left;
     outline: none;
     font-size: 15px;
   }
   
-  .active, .collapsible:hover {
+  .collapsible:hover {
     background-color: #001a1a;
   }
+  .collapsible:after {
+    content: '\002B';
+    color: white;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+  }
+  
+  .active:after {
+    content: "\2212";
+  }
+  
+  .content {
+    overflow: hidden;
+    display: none;
+    padding: 0 18px;
+    background-color: #001a1a;
+    border: 1px solid black
+  }
+    
   .center { 
     height: 200px;
     position: relative;
@@ -74,10 +94,6 @@ html, body, #container {
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-  }
-  .content {
-    display: none;
-    overflow: hidden;
   }
   @media (max-width: 767px) {
   #sidebar {

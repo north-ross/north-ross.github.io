@@ -54,7 +54,7 @@
         <div id="sidebar">
             <div id="bfheader">
                 <a href = "https://www.bfro.net"><img src="boggyCreekStill.png" alt="BFRO logo" style="float: left;" ></a>
-                <p style = "padding: 20px 0"><b>Bigfoot Field Researchers Organization: Sasquatch Reports Explorer (Unofficial)</b></p>
+                <p style = "padding: 20px 0"><b>Bigfoot Field Researchers Organization: Sasquatch Reports Map (Unofficial)</b></p>
             </div>
             <div style="clear: left;">
                 <!-- <p style="color:brown; font-size: 14; text-align: center;"><b>UNOFFICIAL: This page not affiliated with the BFRO.</b></p> -->
@@ -62,21 +62,19 @@
                     Please note that the report locations are known to be somewhat innacurate and are not endorsed by the BFRO. See Disclaimer below for more info.
                 </p>
                 
-                <button type="button" class="collapsible">Data Info</button>
-                <div class="content">
+                <button type="button" class="collapsible active">Using the map</button>
+                <div class="content" style="display: block">
                     <p> Click on each report to learn more about it on the BFRO website. Change the base map using the button in the top-left.</p>
                     <p>This comprehensive database of credible sightings and related reports is maintained by an all-volunteer network of bigfoot/sasquatch researchers, archivists, and investigators in the United States and Canada - the BFRO. </p>
                     <p>If you have had a sighting in the United States, Canada, or any other country, please take a moment and report it to our team of scientists using the button below. The report will be kept quiet and not published if you request it.</p>
                     <p style="text-align:center ;"><button style="color: black;" type="button" onclick="window.open('https://www.bfro.net/GDB/submitfm.asp', '_blank')">Submit a new report</button></p>
-                </div>
-                <button type="button" class="collapsible">Report Classification</button>
-                <div class="content">
                     <p><b><a href = "http://www.bfro.net/gdb/classify.asp#classification" target="_blank" style="font-size: 12;">BFRO Classification System:</b></a></p>
                     <p id="legend">
                     <img src="classA.jpg" alt="Class A icon" id="marker"> <b>Class A Encounter</b>: Well-documented sighting, low potential for misidentification.<br>
                     <img src="classB.jpg" alt="Class B icon" id="marker"> <b>Class B Encounter</b>: Credible report with some potential for misidentification.<br>
                     <img src="classC.jpg" alt="Class C icon" id="marker"> <b>Class C Encounter</b>: Reports with untraceable sources, rarely listed publicly.<br></p>
                 </div>
+                
                 <button type="button" class="collapsible">Disclaimer</button>
                 <div class="content">
                     <p>This open-source project uses data downloaded from the Bigfoot Field Research Organization.</p>
@@ -85,7 +83,7 @@
                         provide an engaging way to explore the BFRO's vast database of credible sightings. However, this map remains unaffiliated with the BFRO website.</p>
                     <p><b>Do not contact the BFRO with any concerns about location accuracy. The BFRO does not endorse the accuracy of these locations.</b> </p>
                     
-                    <p>If you notice a bad location, feel free to click the <i>Location look wrong?</i> link in the popup and try to fill out the form with a new location. If you can find
+                    <p>If you notice a bad location, feel free to click the link in the popup and try to fill out the form with a new location. If you can find
                         some valid coordinates for the location from reading the report and doing some detective work, please submit these with the form and the point will be updated
                         by the next weekly site update.</p>
                     <p>If you have feedback about the map, contact the author at northarperross [at] gmail [dot] com or on <a href = "https://github.com/north-ross/">GitHub</a></p>
@@ -104,16 +102,16 @@
     var i;
 
     for (i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.display === "block") {
-            content.style.display = "none";
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display !== "block") {
+                content.style.display = "block";
             } else {
-            content.style.display = "block";
+                content.style.display = "none";
             }
-        });
-    } 
+            });
+    }
     
     // Map elememts:
     var mymap = L.map('mapid').setView([45, -95], 4);
@@ -196,19 +194,39 @@
                             fillOpacity: 0
                             })};
                 
-                function mouseOut(e){mymap.removeLayer(reportArea)};
-                function mouseOver(e){
+                function removeCircle(e){
                     if(mymap.hasLayer(reportArea)){
                         mymap.removeLayer(reportArea);
                     }
-                    else {
+                };
+
+                // When to display error radius
+                if (L.Browser.mobile) {
+                    // on mobile, draw the circle along with the popup:
+                    function onOpen(e){
                         mymap.addLayer(reportArea)
                         reportArea.bringToBack()
-                        reportArea.on({mouseout: mouseOut});
-                    }
+                    };
+                    layer.on({'popupopen': onOpen});
+                    mymap.on({'popupclose': removeCircle})
+                } else {
+                    // on other platforms, draw the circle on mouseover
+                    function mouseOver(e){
+                        if(mymap.hasLayer(reportArea)){
+                            mymap.removeLayer(reportArea);
+                        }
+                        else {
+                            mymap.addLayer(reportArea)
+                            reportArea.bringToBack()
+                            reportArea.on({mouseout: removeCircle});
+                        }
+                    };
+                    layer.on({'mouseover': mouseOver});
                 };
-                layer.on({mouseover: mouseOver});
-            }
+                
+        }
+                
+                
     });
 
     // Add geoJSON to marker cluster layer, then add to map and update number of reports.
