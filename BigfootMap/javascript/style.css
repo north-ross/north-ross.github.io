@@ -4,7 +4,9 @@ html, body, #container {
     width: 100%;
     background-color: black;
   }
-  
+  h1{
+    text-shadow: -3px -3px 6px #018301, 3px 3px 6px #009900;
+  }
   #bfheader {
       font-size: 18pt;
       font-size: 1.2vw;
@@ -17,7 +19,7 @@ html, body, #container {
     width: 25%;
     background-color: black;
     color: white;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
     margin-left: 20px;
     margin-right: 20px;
     font-size: 10pt;
@@ -95,28 +97,40 @@ html, body, #container {
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
   }
-  @media (max-width: 767px) {
+  @media (max-width: 1194px) {
   #sidebar {
     display: none;
   }
   }
+.splash .leaflet-popup-content{
+    text-align: center;
+}
+.splash.leaflet-popup-content-wrapper .leaflet-popup-content {
+    background-color: #003333;
+    color: white;
+  }
+  
+.splash .leaflet-popup-tip{
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
 
-.leaflet-popup-content-wrapper{
+.bfro .leaflet-popup-content{
     text-align: right;
 }
-.leaflet-popup-content-wrapper, .leaflet-popup.tip {
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
     background-color: #003333;
     color: white;
 }
-.leaflet-popup-content a{
+.bfro .leaflet-popup-content a{
     color:#c0c0ff;
 }
 
-.leaflet-popup-content hr{
+.bfro .leaflet-popup-content hr, .splash .leaflet-popup-content hr{
     color: #009900;
     size: 2;
     border-radius: 2;
     margin: 10px;
     border-top: 2px solid #009900;
 }
-  

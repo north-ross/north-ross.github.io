@@ -4,7 +4,7 @@
 	
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unofficial BFRO Report Locations Explorer</title>
+    <title>SquatchMap</title>
     <meta property="og:image" content="thumbnail.jpg">
     <meta property="og:title" content="Bigfoot Field Researchers Organization: Sasquatch Sightings and Reports Locations">
     <meta name="description" content="This map displays the locations of over 4000 reports of encounters with bigfoot/sasquatch creatures.">
@@ -31,35 +31,37 @@
 
       <div id="container">
         <div id="sidebar">
-            <div id="bfheader">
-                <a href = "https://www.bfro.net"><img src="boggyCreekStill.png" alt="BFRO logo" style="float: left;" ></a>
-                <p style = "padding: 20px 0"><b>Bigfoot Field Researchers Organization: Sasquatch Reports Map (Unofficial)</b></p>
+            <div id="bfheader" class="cyber-text">
+                <img src="boggyCreekStill.png" alt="squatch" style="float: left;" >
+                <h1 style = "padding: 20px 0; display: inline-block;text-shadow: -3px -3px 6px #018301, 3px 3px 6px #009900;">SquatchMap</h1>
+                
             </div>
             <div style="clear: left;">
                 <!-- <p style="color:brown; font-size: 14; text-align: center;"><b>UNOFFICIAL: This page not affiliated with the BFRO.</b></p> -->
                 <p id="intro">This map displays the locations of over 4000 reports of encounters with bigfoot/sasquatch creatures, collected and curated by the <a href='http://www.bfro.net/'>Bigfoot Field Researchers Association</a> (BFRO). 
-                    Please note that the report locations are known to be somewhat innacurate and are not endorsed by the BFRO. See Disclaimer below for more info.
+                    Please note that the report locations are known to be somewhat innacurate and are not endorsed by the BFRO.
                 </p>
                 
                 <button type="button" class="collapsible active">Using the map</button>
                 <div class="content" style="display: block">
-                    <p> Click on each report to learn more about it on the BFRO website. Change the base map using the button in the top-left.</p>
-                    <p>This comprehensive database of credible sightings and related reports is maintained by an all-volunteer network of bigfoot/sasquatch researchers, archivists, and investigators in the United States and Canada - the BFRO. </p>
-                    <p>If you have had a sighting in the United States, Canada, or any other country, please take a moment and report it to our team of scientists using the button below. The report will be kept quiet and not published if you request it.</p>
-                    <p style="text-align:center ;"><button style="color: black;" type="button" onclick="window.open('https://www.bfro.net/GDB/submitfm.asp', '_blank')">Submit a new report</button></p>
+                    <p>Click on each report to learn more about it on the BFRO website. Change the base map using the button in the top-left.</p>
                     <p><b><a href = "http://www.bfro.net/gdb/classify.asp#classification" target="_blank" style="font-size: 12;">BFRO Classification System:</b></a></p>
                     <p id="legend">
                     <img src="classA.jpg" alt="Class A icon" id="marker"> <b>Class A Encounter</b>: Well-documented sighting, low potential for misidentification.<br>
                     <img src="classB.jpg" alt="Class B icon" id="marker"> <b>Class B Encounter</b>: Credible report with some potential for misidentification.<br>
                     <img src="classC.jpg" alt="Class C icon" id="marker"> <b>Class C Encounter</b>: Reports with untraceable sources, rarely listed publicly.<br></p>
                 </div>
-                
-                <button type="button" class="collapsible">Disclaimer</button>
+                <button type="button" class="collapsible">About the Data</button>
                 <div class="content">
-                    <p>This open-source project uses data downloaded from the Bigfoot Field Research Organization.</p>
-                    <p>For a number of reasons, many of the locations displayed on this map do not reflect the actual location of the incident. For this reason, the BFRO discontinued making
-                        the spatial component to their database public in 2019. This map's author decided that this information is interesting, despite its errors, and that the approximate locations
-                        provide an engaging way to explore the BFRO's vast database of credible sightings. However, this map remains unaffiliated with the BFRO website.</p>
+                    <p>The data displayed on the map represents about half of the <a href="http://www.bfro.net/GDB/classify.asp">comprehensive database</a> of credible sightings and related reports.</p>
+                    <p>All report data belongs to the BFRO, though some report locations have been corrected by users of this site, as indicated in the popup. </p>
+                    
+                    <p>If you have had a sighting in the United States, Canada, or any other country, please take a moment and report it to their team of scientists using the button below. The report will be kept quiet and not published if you request it.</p>
+                    <p style="text-align:center ;"><button style="color: black;" type="button" onclick="window.open(`https://www.bfro.net/GDB/submitfm.asp`, `_blank`)">Submit a new report</button></p>
+                </div>
+                <button type="button" class="collapsible">Location accuracy</button>
+                <div class="content">
+                    <p>This open-source project uses data downloaded from the Bigfoot Field Research Organization. For more information on the data and map, see the <a href="https://github.com/north-ross/north-ross.github.io/tree/main/BigfootMap">GitHub repository</a>.</p>
                     <p><b>Do not contact the BFRO with any concerns about location accuracy. The BFRO does not endorse the accuracy of these locations.</b> </p>
                     
                     <p>If you notice a bad location, feel free to click the link in the popup and try to fill out the form with a new location. If you can find
@@ -156,7 +158,8 @@
                     var correction = `<br><i>Corrected ${feature.properties.correctedTime} by ${feature.properties.correctedBy}</i>`
                 } else {var correction = ""};
                 layer.bindPopup(popContent.concat(errorRadius, correction), {
-                    maxWidth: "300"
+                    maxWidth: "300",
+                    className: 'bfro'
                 });
 
                 // Area circle:
@@ -210,15 +213,42 @@
                 
     });
 
+
+    
+
     // Add geoJSON to marker cluster layer, then add to map and update number of reports.
     geojsonAjax.on('data:loaded', function () {
             markers.addLayer(geojsonAjax);
             mymap.addLayer(markers);
-            document.getElementById("intro").innerHTML = "This map displays the locations of "
-                +counter.toLocaleString('en-US')
-                +" reports of encounters with bigfoot/sasquatch creatures, collected and curated by the <a href='http://www.bfro.net/'>Bigfoot Field Researchers Association</a> (BFRO)."
-                +" Please note that the report locations are known to be somewhat innacurate and are not endorsed by the BFRO. See Disclaimer below for more info."; //Display counter on sidebar
+
+            // Display counter on sidebar
+            var introHTML = `This map displays the locations of ${counter.toLocaleString('en-US')} reports of encounters with bigfoot/sasquatch creatures, 
+                    collected and curated by the <a href='http://www.bfro.net/'>Bigfoot Field Researchers Association</a> (BFRO).`;
+            document.getElementById("intro").innerHTML = introHTML; 
+            
+            if (L.Browser.mobile){ //set to mobile
+                // create and open splash screen when data is loaded
+                var splashContent = `<h1>SquatchMap</h1><img src="boggyCreekStill.png" alt="squatch"><hr><p>${introHTML}</p>
+                                    <p>Click any point to read the full report on BFRO.net.</p>
+                                    <p><a href = "https://github.com/north-ross/north-ross.github.io/tree/main/BigfootMap">More info on this project and data.</a></p>`;
+                
+                var splashPopup = L.popup({
+                    closeButton: true,
+                    autoClose: true,
+                    className: 'splash',
+                    maxWidth: 'auto',
+                    offset: L.point(0,50)
+                    })
+                    .setLatLng(mymap.getBounds().getCenter())
+                    .setContent(splashContent)
+                    .openOn(mymap);
+            }
         });
+    
+    
+    mymap.attributionControl.addAttribution("Report data: <a href='http://www.bfro.net/REF/aboutbfr.asp'>BFRO</a>");
+
+    
 
     // Record coordinates of the last spot the user clicked on sidebar to make report submission of bad points easier:
     mymap.on('click', function(e){
