@@ -99,13 +99,13 @@
     L.control.scale().addTo(mymap);
 
     // Base maps:
-    var cycle = L.tileLayer.provider('CyclOSM').addTo(mymap),
+    var cycle = L.tileLayer.provider('Stadia.AlidadeSmoothDark').addTo(mymap),
         imagery = L.tileLayer.provider('Esri.WorldImagery'),
-        usgstopo = L.tileLayer.provider('USGS.USImageryTopo');
+        opentopo = L.tileLayer.provider('OpenTopoMap');
     var basemaps = {
-        "OpenStreetMap Topographic": cycle,
+        "Stadia Maps": cycle,
         "ESRI Imagery": imagery,
-        "USGS Imagery + Topo (US only)": usgstopo
+        "OpenStreetMap Topographic": opentopo
     };
     L.control.layers(basemaps).addTo(mymap);
 
