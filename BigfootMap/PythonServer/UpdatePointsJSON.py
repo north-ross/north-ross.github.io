@@ -27,7 +27,6 @@ from io import BytesIO
 import csv
 import subprocess
 import os
-from win10toast import ToastNotifier
 
 #%%
 # Build XML parser:
@@ -138,7 +137,7 @@ def GitUpload():
     #push changes to github and update github page
     # commit and push to Github:
 
-    gitdir = r"D:\Documents\NorthsWebProjects\north-ross.github.io"
+    gitdir = r"/home/northross/Documents/GitHub/north-ross.github.io/"
 
     subprocess.run("git add .", cwd = gitdir)
 
@@ -189,7 +188,7 @@ def main():
                 floatRadius = None
             # validate coordinates and cast to list of floats:
             line['Issue'] = ""
-            badCSVstr = r"D:\Documents\NorthsWebProjects\north-ross.github.io\BigfootMap\PythonServer\BadPoints.csv"
+            badCSVstr = r"BadPoints.csv"
             with open(badCSVstr, 'w') as badCSV:
                 badWriter = csv.DictWriter(badCSV, line.keys())
                 badWriter.writeheader()
@@ -243,11 +242,10 @@ def main():
     
     #%%
     
-    GitUpload()
+    # GitUpload()
 
     if len(BadPointList) != 0:
-        n = ToastNotifier()
-        n.show_toast("BFRO Points Updater", f"{len(BadPointList)} bad points were found in google sheet. Review BadPointCSV.")
+        print("BFRO Points Updater", f"{len(BadPointList)} bad points were found in google sheet. Review BadPointCSV.")
 #%%
 
 if __name__ == "__main__":
