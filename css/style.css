@@ -20,7 +20,7 @@ body {
 }
 .with-image .text { flex: 1 1 20rem; }
 .with-image img   { flex: 0 1 15rem; max-width: 100%; height: auto; }
-header, footer { margin: 1.5rem 0; }
+header, footer { margin: 1.5rem 0; background-color: #252525; text-align: center;}
 h1, h2, h3 { line-height: 1.2; }
 a { text-decoration: underline; }
 code, pre { font-family: ui-monospace, monospace; }
