@@ -1,10 +1,25 @@
-:root { color-scheme: light dark; }
+:root { 
+  color-scheme: light dark; 
+  --nc-font-sans: "Times New Roman", Times, "Liberation Serif", serif;
+}
 body {
-  /* max-width: 44rem; */
+  max-width: 60rem;
   margin: 2rem auto;
   padding: 0 1rem;
-  font-family: Times New Roman,Times,Liberation Serif,serif;
 }
+.with-image {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;          /* stacks on narrow screens */
+  flex: 0 1 400px;
+} 
+.portrait {
+  max-width: 400px;
+  height: auto;
+}
+.with-image .text { flex: 1 1 20rem; }
+.with-image img   { flex: 0 1 15rem; max-width: 100%; height: auto; }
 header, footer { margin: 1.5rem 0; }
 h1, h2, h3 { line-height: 1.2; }
 a { text-decoration: underline; }
