@@ -1,6 +1,6 @@
 :root { color-scheme: light dark; }
 body {
-  max-width: 44rem;
+  /* max-width: 44rem; */
   margin: 2rem auto;
   padding: 0 1rem;
   font-family: Times New Roman,Times,Liberation Serif,serif;
