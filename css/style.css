@@ -23,7 +23,7 @@ body {
 header, footer {
   margin: 1.5rem 0;
   padding: 1rem 1.5rem;      /* overrides new.css's calc(50vw - 50%) padding */
-  background-color: #252525;
+  background-color: var(--nc-bg-3);
   text-align: center;
 }
 h1, h2, h3 { line-height: 1.2; }
