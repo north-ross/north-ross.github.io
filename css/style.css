@@ -29,3 +29,17 @@ header, footer {
 h1, h2, h3 { line-height: 1.2; }
 a { text-decoration: underline; }
 code, pre { font-family: ui-monospace, monospace; }
+
+.project-header {
+  display: flex;
+  justify-content: space-between;  /* title left, year right */
+  align-items: baseline;           /* lines up the text baselines */
+  gap: 1rem;
+}
+.project-header h2,
+.project-header h4 {
+  margin: 0;                       /* new.css adds heading margins that throw off alignment */
+}
+.project-header {
+  margin: 1.5rem 0 0.5rem;         /* spacing for the whole row instead */
+}
